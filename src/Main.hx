@@ -1,9 +1,8 @@
 package;
 
 
-import openfl.display.Graphics;
+import openfl.display.FPS;
 import openfl.display.Sprite;
-import openfl.Lib;
 import openfl.geom.Point;
 
 using GraphicsStatExt;
@@ -22,6 +21,8 @@ class Main extends Sprite
 	{
 		super();
 		
+		
+		/*
 		circles = [
 			{center:new Point(100, 100), radius:50},
 			{center:new Point(125, 125), radius:50},
@@ -44,10 +45,12 @@ class Main extends Sprite
 				}
 			}
 		}
+		*/
+		
+		addChild(new MetaballRacetrack());
 		
 		
-		
-		
+		addChild(new FPS(10, 10, 0xff0000));
 		
 	}
 	
