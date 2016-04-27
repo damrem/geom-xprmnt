@@ -133,7 +133,7 @@ class Main extends Sprite
 	function getPolygonFromCircle(circle:Circle, size:Int=32):Polygon
 	{
 		var v = circle.center.clone();
-		v.set(x+circle.
+		v.set(x + circle.radius, 0);
 		var slice = Math.PI * 2 / size;
 		var pts = [];
 		for (i in 0...size)
