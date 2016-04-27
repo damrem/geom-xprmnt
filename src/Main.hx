@@ -47,7 +47,7 @@ class Main extends Sprite
 		}
 		*/
 		
-		addChild(new MetaballRacetrack());
+		addChild(new MetaballGrowing());
 		
 		
 		addChild(new FPS(10, 10, 0xff0000));

@@ -58,6 +58,7 @@ class MetaballRacetrack extends Sprite
 		manager = MetaballManager.getInstance();
 		manager.addMetaball(new Metaball( new Vector2D(600.0, 200.0), 4.0 ));
 		manager.addMetaball(new Metaball( new Vector2D(300.0, 200.0), 4.0 ));
+		manager.addMetaball(new Metaball( new Vector2D(450.0, 150.0), 1.0 ));
 		manager.addMetaball(target);
 		
 		//// Styling & Display ////
