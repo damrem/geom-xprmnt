@@ -1,9 +1,14 @@
 package;
 
 
+import com.metaballdemo.util.MathUtil;
+import com.metaballdemo.util.Vector2D;
 import openfl.display.FPS;
 import openfl.display.Sprite;
-import openfl.geom.Point;
+import thx.geom.d2.Circle;
+import thx.geom.d2.Point;
+import thx.geom.d2.Polygon;
+import thx.geom.d2.Vector;
 
 using GraphicsStatExt;
 //using PointStatExt;
@@ -22,12 +27,18 @@ class Main extends Sprite
 		super();
 		
 		
-		/*
+		
 		circles = [
-			{center:new Point(100, 100), radius:50},
-			{center:new Point(125, 125), radius:50},
-			{center:new Point(75, 125), radius:50}
+			new Circle(Point.create(150, 150), 150),
+			//{center:new Point(125, 125), radius:50},
+			new Circle(Point.create(375, 225), 150)
 		];
+		
+		var polygons = circles.map(function(circle)
+		{
+			return getPolygonFromCircle(circle);
+		});
+		trace(polygons);
 		
 		graphics.lineStyle(1, 0xff0000);
 		for (circle0 in circles)
@@ -45,9 +56,9 @@ class Main extends Sprite
 				}
 			}
 		}
-		*/
 		
-		addChild(new MetaballGrowing());
+		
+		//addChild(new MetaballGrowing());
 		
 		
 		addChild(new FPS(10, 10, 0xff0000));
@@ -59,11 +70,11 @@ class Main extends Sprite
 	{
 		var x0 = circle0.center.x;
 		var y0 = circle0.center.y;
-		var r0 = circle0.radius;
+		var r0 = circle0.radius/*.toFloat()*/;
 		
 		var x1 = circle1.center.x;
 		var y1 = circle1.center.y;
-		var r1 = circle1.radius;
+		var r1 = circle1.radius/*.toFloat()*/;
 		
 		var a, dx, dy, d, h, rx, ry;
         var x2, y2;
@@ -116,8 +127,22 @@ class Main extends Sprite
         var yi = y2 + ry;
         var yi_prime = y2 - ry;
 
-		return [new Point(xi, yi), new Point(xi_prime, yi_prime)];
+		return [Point.create(xi, yi), Point.create(xi_prime, yi_prime)];
     }
+	
+	function getPolygonFromCircle(circle:Circle, size:Int=32):Polygon
+	{
+		var v = circle.center.clone();
+		v.set(x+circle.
+		var slice = Math.PI * 2 / size;
+		var pts = [];
+		for (i in 0...size)
+		{
+			pts.push(Point.create(v.x, v.y));
+			v=Vector.fromAngle(v.toAngle()+ slice);
+		}
+		return new Polygon(pts);
+	}
 
 }
 
