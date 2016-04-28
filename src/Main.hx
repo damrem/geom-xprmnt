@@ -2,6 +2,7 @@ package;
 
 
 import com.metaballdemo.util.MathUtil;
+import openfl.Lib;
 import src.hxgeomalgo.Tess2;
 import openfl.display.FPS;
 import openfl.display.Sprite;
@@ -23,12 +24,12 @@ class Main extends Sprite
 	{
 		super();
 		
-		
+		var stage = Lib.current.stage;
 		
 		circles = [
-			{center: new Point(150, 150), radius:100},
-			{center:new Point(225, 125), radius:100},
-			{center: new Point(375, 225), radius:100}
+			{center: new Point(stage.stageWidth/2, stage.stageHeight/2), radius:50}
+			//{center:new Point(225, 125), radius:100},
+			//{center: new Point(375, 225), radius:100}
 		];
 		
 		var polygonCoords:Array<Array<Float>> = circles.map(function(circle)
@@ -44,53 +45,30 @@ class Main extends Sprite
 		
 		
 		
-		/*
-		var flattenedPolygon0 = [];
-		for (pt in polygons[0])
-		{
-			flattenedPolygon0.push(pt.x);
-			flattenedPolygon0.push(pt.y);
-		}
-		trace(flattenedPolygon0);
-		
-		var flattenedPolygon1 = [];		
-		for (pt in polygons[1])
-		{
-			flattenedPolygon1.push(pt.x);
-			flattenedPolygon1.push(pt.y);
-		}
-		*/
-		
-		//trace(polygons);
-		trace(polygonCoords.length);
 		var polyCoords:Array<Array<Float>> = polygonCoords.slice(0,polygonCoords.length);
-		//trace(polys);
 		var union:TessResult={vertices:[], vertexIndices:[], vertexCount:0,elements:[],elementCount:0};
-		var combined:Array<Float> = polyCoords.shift();
-		//var union:Array<Float> = polyCoords.shift();
+		var combined:Array<Float> = [];
 		
-		trace(polyCoords.length );
 		while (polyCoords.length > 0)
 		{
 			trace("while");
-			
-			union = Tess2.union([combined], [polyCoords.shift()], ResultType.BOUNDARY_CONTOURS);
+			var toCombine = polyCoords.shift();
+			if (toCombine == null)
+			{
+				toCombine = [];
+			}
+			union = Tess2.union([combined], [toCombine], ResultType.BOUNDARY_CONTOURS);
 			combined = union.vertices;
-			//union = union.concat(Tess2.union([polyA], [polyB], ResultType.BOUNDARY_CONTOURS).vertices);
 			
 		}
 		var res = Tess2.convertResult(union.vertices, union.elements, ResultType.BOUNDARY_CONTOURS, 3);
 		
-		/*var union = (Tess2.union([flattenedPolygon0], [flattenedPolygon1], ResultType.BOUNDARY_CONTOURS));
-		var polys = Tess2.convertResult(union.vertices, union.elements, ResultType.BOUNDARY_CONTOURS, 3);
-		*/
 		for (poly in res)
 		{
 			var lastPoint = poly[poly.length - 1];
 			graphics.moveTo(lastPoint.x, lastPoint.y);
 			for (pt in poly)
 			{
-				//trace(pt);
 				graphics.lineTo(pt.x, pt.y);
 			}
 		}
