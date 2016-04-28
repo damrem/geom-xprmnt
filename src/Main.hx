@@ -26,54 +26,25 @@ class Main extends Sprite
 		
 		
 		circles = [
-			{center: new Point(150, 150), radius:150},
-			//{center:new Point(125, 125), radius:50},
-			{center: new Point(375, 225), radius:150}
+			{center: new Point(150, 150), radius:100},
+			{center:new Point(225, 125), radius:100},
+			{center: new Point(375, 225), radius:100}
 		];
 		
-		var polygons = circles.map(function(circle)
+		var polygonCoords:Array<Array<Float>> = circles.map(function(circle)
 		{
-			return getPolygonFromCircle(circle);
+			return getCoordsFromCircle(circle);
 		});
 		//trace(polygons.length);
 		
-		graphics.lineStyle(1, 0xff0000);
-		/*for (circle0 in circles)
-		{
-			graphics.drawFromCircle(circle0);
-			
-			for (circle1 in circles)
-			{
-				if (circle1 == circle0){
-					break;
-				}
-				for (p in intersection(circle0, circle1))
-				{
-					graphics.drawCircle(p.x, p.y, 2.5);
-				}
-			}
-		}
-		*/
+		graphics.lineStyle(5, 0xff0000);
+		
+		
+		
+		
 		
 		
 		/*
-		for (polygon in polygons) 
-		{
-			//trace(polygon);
-			var lastPoint = polygon[polygon.length - 1];
-			graphics.moveTo(lastPoint.x, lastPoint.y);
-			for (pt in polygon)
-			{
-				//trace(pt);
-				graphics.lineStyle(1, Std.random(0x1000000));
-				graphics.lineTo(pt.x, pt.y);
-			}
-			graphics.lineTo(lastPoint.x, lastPoint.y);
-		}
-		*/
-		
-		
-		
 		var flattenedPolygon0 = [];
 		for (pt in polygons[0])
 		{
@@ -88,23 +59,42 @@ class Main extends Sprite
 			flattenedPolygon1.push(pt.x);
 			flattenedPolygon1.push(pt.y);
 		}
+		*/
 		
+		//trace(polygons);
+		trace(polygonCoords.length);
+		var polyCoords:Array<Array<Float>> = polygonCoords.slice(0,polygonCoords.length);
+		//trace(polys);
+		var union:TessResult={vertices:[], vertexIndices:[], vertexCount:0,elements:[],elementCount:0};
+		var combined:Array<Float> = polyCoords.shift();
+		//var union:Array<Float> = polyCoords.shift();
 		
-		var union = (Tess2.union([flattenedPolygon0], [flattenedPolygon1], ResultType.BOUNDARY_CONTOURS));
+		trace(polyCoords.length );
+		while (polyCoords.length > 0)
+		{
+			trace("while");
+			
+			union = Tess2.union([combined], [polyCoords.shift()], ResultType.BOUNDARY_CONTOURS);
+			combined = union.vertices;
+			//union = union.concat(Tess2.union([polyA], [polyB], ResultType.BOUNDARY_CONTOURS).vertices);
+			
+		}
+		var res = Tess2.convertResult(union.vertices, union.elements, ResultType.BOUNDARY_CONTOURS, 3);
+		
+		/*var union = (Tess2.union([flattenedPolygon0], [flattenedPolygon1], ResultType.BOUNDARY_CONTOURS));
 		var polys = Tess2.convertResult(union.vertices, union.elements, ResultType.BOUNDARY_CONTOURS, 3);
-		for (poly in polys)
+		*/
+		for (poly in res)
 		{
 			var lastPoint = poly[poly.length - 1];
 			graphics.moveTo(lastPoint.x, lastPoint.y);
-			//trace(poly);
 			for (pt in poly)
 			{
-				trace(pt);
-				//graphics.lineStyle(1, Std.random(0x1000000));
+				//trace(pt);
 				graphics.lineTo(pt.x, pt.y);
 			}
 		}
-		//addChild(new MetaballGrowing());
+		
 		
 		
 		addChild(new FPS(10, 10, 0xff0000));
@@ -112,6 +102,57 @@ class Main extends Sprite
 		
 		
 	}
+	
+	
+	
+	
+	function getPolygonFromCircle(circle:Circle, size:Int=32):Array<Point>
+	{
+		var slice = Math.PI * 2 / size;
+		//trace( size, slice);
+		var hand = new Vector2D(circle.radius, 0);
+		
+		var pts = [];
+		
+		for (i in 0...size)
+		{
+			
+			pts.push(new Point(circle.center.x+hand.x, circle.center.y+hand.y));
+			//trace(hand.x);
+			
+			hand.angle += slice;
+			
+			
+			//v=new Vector2D(v.toAngle()+ slice);
+		}
+		return pts;
+	}
+	
+	
+	function getCoordsFromCircle(circle:Circle, size:Int=32):Array<Float>
+	{
+		var slice = Math.PI * 2 / size;
+		//trace( size, slice);
+		var hand = new Vector2D(circle.radius, 0);
+		
+		var floats = [];
+		
+		for (i in 0...size)
+		{
+			
+			floats.push(circle.center.x + hand.x);
+			floats.push(circle.center.y + hand.y);
+			//trace(hand.x);
+			
+			hand.angle += slice;
+			
+			
+			//v=new Vector2D(v.toAngle()+ slice);
+		}
+		return floats;
+	}
+	
+	
 	
 	
 	function intersection(circle0:Circle, circle1:Circle):Array<Point>
@@ -177,28 +218,6 @@ class Main extends Sprite
 
 		return [new Point(xi, yi), new Point(xi_prime, yi_prime)];
     }
-	
-	function getPolygonFromCircle(circle:Circle, size:Int=32):Array<Point>
-	{
-		var slice = Math.PI * 2 / size;
-		//trace( size, slice);
-		var hand = new Vector2D(circle.radius, 0);
-		
-		var pts = [];
-		
-		for (i in 0...size)
-		{
-			
-			pts.push(new Point(circle.center.x+hand.x, circle.center.y+hand.y));
-			//trace(hand.x);
-			
-			hand.angle += slice;
-			
-			
-			//v=new Vector2D(v.toAngle()+ slice);
-		}
-		return pts;
-	}
 
 }
 
