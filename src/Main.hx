@@ -2,13 +2,9 @@ package;
 
 
 import com.metaballdemo.util.MathUtil;
-import com.metaballdemo.util.Vector2D;
 import openfl.display.FPS;
 import openfl.display.Sprite;
-import thx.geom.d2.Circle;
-import thx.geom.d2.Point;
-import thx.geom.d2.Polygon;
-import thx.geom.d2.Vector;
+import openfl.geom.Point;
 
 using GraphicsStatExt;
 //using PointStatExt;
@@ -29,19 +25,19 @@ class Main extends Sprite
 		
 		
 		circles = [
-			new Circle(Point.create(150, 150), 150),
+			{center: new Point(150, 150), radius:150},
 			//{center:new Point(125, 125), radius:50},
-			new Circle(Point.create(375, 225), 150)
+			{center: new Point(375, 225), radius:150}
 		];
 		
 		var polygons = circles.map(function(circle)
 		{
 			return getPolygonFromCircle(circle);
 		});
-		trace(polygons);
+		trace(polygons.length);
 		
 		graphics.lineStyle(1, 0xff0000);
-		for (circle0 in circles)
+		/*for (circle0 in circles)
 		{
 			graphics.drawFromCircle(circle0);
 			
@@ -56,12 +52,29 @@ class Main extends Sprite
 				}
 			}
 		}
+		*/
+		
+		for (polygon in polygons) 
+		{
+			trace(polygon);
+			var lastPoint = polygon[polygon.length - 1];
+			graphics.moveTo(lastPoint.x, lastPoint.y);
+			for (pt in polygon)
+			{
+				trace(pt);
+				graphics.lineStyle(1, Std.random(0x1000000));
+				graphics.lineTo(pt.x, pt.y);
+			}
+			graphics.lineTo(lastPoint.x, lastPoint.y);
+		}
 		
 		
 		//addChild(new MetaballGrowing());
 		
 		
 		addChild(new FPS(10, 10, 0xff0000));
+		
+		
 		
 	}
 	
@@ -127,21 +140,29 @@ class Main extends Sprite
         var yi = y2 + ry;
         var yi_prime = y2 - ry;
 
-		return [Point.create(xi, yi), Point.create(xi_prime, yi_prime)];
+		return [new Point(xi, yi), new Point(xi_prime, yi_prime)];
     }
 	
-	function getPolygonFromCircle(circle:Circle, size:Int=32):Polygon
+	function getPolygonFromCircle(circle:Circle, size:Int=32):Array<Point>
 	{
-		var v = circle.center.clone();
-		v.set(x + circle.radius, 0);
 		var slice = Math.PI * 2 / size;
+		trace( size, slice);
+		var hand = new Vector2D(circle.radius, 0);
+		
 		var pts = [];
+		
 		for (i in 0...size)
 		{
-			pts.push(Point.create(v.x, v.y));
-			v=Vector.fromAngle(v.toAngle()+ slice);
+			
+			pts.push(new Point(circle.center.x+hand.x, circle.center.y+hand.y));
+			trace(hand.x);
+			
+			hand.angle += slice;
+			
+			
+			//v=new Vector2D(v.toAngle()+ slice);
 		}
-		return new Polygon(pts);
+		return pts;
 	}
 
 }

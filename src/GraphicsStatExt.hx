@@ -1,6 +1,5 @@
 package;
 import openfl.display.Graphics;
-import thx.geom.d2.Circle;
 
 /**
  * ...
