@@ -2,6 +2,10 @@ package;
 
 
 import com.metaballdemo.util.MathUtil;
+import openfl.display.Bitmap;
+import openfl.display.BitmapData;
+import openfl.events.Event;
+import openfl.events.MouseEvent;
 import openfl.Lib;
 import src.hxgeomalgo.Tess2;
 import openfl.display.FPS;
@@ -19,10 +23,27 @@ class Main extends Sprite
 {
 
 	var circles:Array<Circle>;
+	var isMouseDown:Bool;
+	var scene0:Sprite;
+	var scene1:Sprite;
+	var currentScene:Sprite;
+	//var buffer0:BitmapData;
+	//var buffer1:BitmapData;
+	var currentBuffer:BitmapData;
 	
 	public function new() 
 	{
 		super();
+		
+		//buffer0 = new BitmapData(Std.int(stage.stageWidth), Std.int(stage.stageHeight));
+		//buffer1 = new BitmapData(Std.int(stage.stageWidth), Std.int(stage.stageHeight));
+		currentBuffer = new BitmapData(Std.int(stage.stageWidth), Std.int(stage.stageHeight));
+		var screen = new Bitmap(currentBuffer);
+		addChild(screen);
+		
+		scene0 = new Sprite();
+		scene1 = new Sprite();
+		currentScene = scene0;
 		
 		var stage = Lib.current.stage;
 		
@@ -32,17 +53,38 @@ class Main extends Sprite
 			//{center: new Point(375, 225), radius:100}
 		];
 		
+		//trace(polygons.length);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		addChild(new FPS(10, 10, 0xff0000));
+		
+		addEventListener(MouseEvent.MOUSE_DOWN, onMouseUpOrDown);
+		addEventListener(MouseEvent.MOUSE_UP, onMouseUpOrDown);
+		addEventListener(Event.ENTER_FRAME, update);
+	}
+	
+	private function update(e:Event):Void 
+	{
+		if (isMouseDown)
+		{
+			circles.push( { center:new Point(mouseX, mouseY), radius:50 } );
+		}
+		
+		
+		
 		var polygonCoords:Array<Array<Float>> = circles.map(function(circle)
 		{
 			return getCoordsFromCircle(circle);
 		});
-		//trace(polygons.length);
-		
-		graphics.lineStyle(5, 0xff0000);
-		
-		
-		
-		
 		
 		
 		var polyCoords:Array<Array<Float>> = polygonCoords.slice(0,polygonCoords.length);
@@ -51,7 +93,6 @@ class Main extends Sprite
 		
 		while (polyCoords.length > 0)
 		{
-			trace("while");
 			var toCombine = polyCoords.shift();
 			if (toCombine == null)
 			{
@@ -62,23 +103,41 @@ class Main extends Sprite
 			
 		}
 		var res = Tess2.convertResult(union.vertices, union.elements, ResultType.BOUNDARY_CONTOURS, 3);
-		
+		currentScene.graphics.clear();
+		currentScene.graphics.lineStyle(5, 0xff0000);
 		for (poly in res)
 		{
 			var lastPoint = poly[poly.length - 1];
-			graphics.moveTo(lastPoint.x, lastPoint.y);
+			currentScene.graphics.moveTo(lastPoint.x, lastPoint.y);
 			for (pt in poly)
 			{
-				graphics.lineTo(pt.x, pt.y);
+				currentScene.graphics.lineTo(pt.x, pt.y);
 			}
 		}
 		
+		currentBuffer.fillRect(currentBuffer.rect, 0x000000);
+		currentBuffer.draw(currentScene);
 		
-		
-		addChild(new FPS(10, 10, 0xff0000));
-		
-		
-		
+		if (currentScene == scene0)
+		{
+			currentScene = scene1;
+		}
+		else
+		{
+			currentScene = scene0;
+		}
+	}
+	
+	private function onMouseUpOrDown(e:MouseEvent):Void 
+	{
+		if (e.type == MouseEvent.MOUSE_DOWN)
+		{
+			isMouseDown = true;
+		}
+		else
+		{
+			isMouseDown = false;
+		}
 	}
 	
 	
