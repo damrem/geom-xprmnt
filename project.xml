@@ -16,9 +16,8 @@
 	<source path="src" />
 	<haxelib name="openfl" />
 	<haxelib name="actuate" />
-	<haxelib name="differ" />
+	<haxelib name="thx.geom" />
 	<haxelib name="hxGeomAlgo" />
-	
 	
 	<!-- assets -->
 	<icon path="assets/openfl.svg" />

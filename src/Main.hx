@@ -35,7 +35,7 @@ class Main extends Sprite
 		{
 			return getPolygonFromCircle(circle);
 		});
-		trace(polygons.length);
+		//trace(polygons.length);
 		
 		graphics.lineStyle(1, 0xff0000);
 		/*for (circle0 in circles)
@@ -55,38 +55,55 @@ class Main extends Sprite
 		}
 		*/
 		
+		
+		/*
 		for (polygon in polygons) 
 		{
-			trace(polygon);
+			//trace(polygon);
 			var lastPoint = polygon[polygon.length - 1];
 			graphics.moveTo(lastPoint.x, lastPoint.y);
 			for (pt in polygon)
 			{
-				trace(pt);
+				//trace(pt);
 				graphics.lineStyle(1, Std.random(0x1000000));
 				graphics.lineTo(pt.x, pt.y);
 			}
 			graphics.lineTo(lastPoint.x, lastPoint.y);
 		}
+		*/
 		
 		
 		
 		var flattenedPolygon0 = [];
 		for (pt in polygons[0])
 		{
-			flattenedPolygon0.push([pt.x, pt.y]);
+			flattenedPolygon0.push(pt.x);
+			flattenedPolygon0.push(pt.y);
 		}
+		trace(flattenedPolygon0);
 		
 		var flattenedPolygon1 = [];		
 		for (pt in polygons[1])
 		{
-			flattenedPolygon1.push([pt.x, pt.y]);
+			flattenedPolygon1.push(pt.x);
+			flattenedPolygon1.push(pt.y);
 		}
 		
 		
-		trace(Tess2.union(flattenedPolygon0, flattenedPolygon1));
-		
-		
+		var union = (Tess2.union([flattenedPolygon0], [flattenedPolygon1], ResultType.BOUNDARY_CONTOURS));
+		var polys = Tess2.convertResult(union.vertices, union.elements, ResultType.BOUNDARY_CONTOURS, 3);
+		for (poly in polys)
+		{
+			var lastPoint = poly[poly.length - 1];
+			graphics.moveTo(lastPoint.x, lastPoint.y);
+			//trace(poly);
+			for (pt in poly)
+			{
+				trace(pt);
+				//graphics.lineStyle(1, Std.random(0x1000000));
+				graphics.lineTo(pt.x, pt.y);
+			}
+		}
 		//addChild(new MetaballGrowing());
 		
 		
@@ -164,7 +181,7 @@ class Main extends Sprite
 	function getPolygonFromCircle(circle:Circle, size:Int=32):Array<Point>
 	{
 		var slice = Math.PI * 2 / size;
-		trace( size, slice);
+		//trace( size, slice);
 		var hand = new Vector2D(circle.radius, 0);
 		
 		var pts = [];
@@ -173,7 +190,7 @@ class Main extends Sprite
 		{
 			
 			pts.push(new Point(circle.center.x+hand.x, circle.center.y+hand.y));
-			trace(hand.x);
+			//trace(hand.x);
 			
 			hand.angle += slice;
 			
