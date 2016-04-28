@@ -2,6 +2,7 @@ package;
 
 
 import com.metaballdemo.util.MathUtil;
+import src.hxgeomalgo.Tess2;
 import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.geom.Point;
@@ -67,6 +68,23 @@ class Main extends Sprite
 			}
 			graphics.lineTo(lastPoint.x, lastPoint.y);
 		}
+		
+		
+		
+		var flattenedPolygon0 = [];
+		for (pt in polygons[0])
+		{
+			flattenedPolygon0.push([pt.x, pt.y]);
+		}
+		
+		var flattenedPolygon1 = [];		
+		for (pt in polygons[1])
+		{
+			flattenedPolygon1.push([pt.x, pt.y]);
+		}
+		
+		
+		trace(Tess2.union(flattenedPolygon0, flattenedPolygon1));
 		
 		
 		//addChild(new MetaballGrowing());
